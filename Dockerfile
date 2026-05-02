@@ -1,35 +1,20 @@
 # Stage 1: Build
 FROM eclipse-temurin:17-jdk-alpine AS build
-
 WORKDIR /app
 
-# Copy Maven Wrapper
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
 
-# Give Execute Permission
-RUN chmod +x mvnw
-
-# Download Dependencies
-RUN ./mvnw dependency:go-offline -B
-
-# Copy Source Code
 COPY src ./src
-
-# Build Application
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw package -DskipTests
 
 # Stage 2: Run
 FROM eclipse-temurin:17-jre-alpine
-
 WORKDIR /app
 
-# Copy Generated JAR
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose Spring Boot Port
 EXPOSE 8080
 
-# Run Application
 ENTRYPOINT ["java", "-jar", "app.jar"]
