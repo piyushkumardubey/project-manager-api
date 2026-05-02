@@ -26,7 +26,6 @@ import project_manager_api.service.impl.UserDetailsServiceImpl;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-    // Uses UserDetailsServiceImpl — the single source of truth
     private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
