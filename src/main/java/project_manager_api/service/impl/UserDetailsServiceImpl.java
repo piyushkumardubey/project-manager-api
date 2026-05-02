@@ -10,10 +10,6 @@ import project_manager_api.repository.UserRepository;
 
 import java.util.Collections;
 
-/**
- * PRIMARY UserDetailsService — used by JwtFilter and SecurityConfig.
- * This is the only UserDetailsService bean in the application.
- */
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -21,22 +17,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email)
-            throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        project_manager_api.entity.User user =
-                userRepository.findByEmail(email)
-                        .orElseThrow(() ->
-                                new UsernameNotFoundException(
-                                        "User not found with email: " + email));
+        project_manager_api.entity.User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
                 Collections.singletonList(
-                        new SimpleGrantedAuthority(
-                                "ROLE_" + user.getRole().name()
-                        )
+                        new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
                 )
         );
     }
