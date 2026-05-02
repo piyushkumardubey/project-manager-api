@@ -3,9 +3,6 @@ package project_manager_api.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project_manager_api.dto.LoginRequest;
@@ -18,12 +15,14 @@ import project_manager_api.repository.UserRepository;
 import project_manager_api.security.JwtUtil;
 import project_manager_api.service.AuthService;
 
-import java.util.List;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
+/**
+ * AuthServiceImpl handles only signup and login.
+ * UserDetailsService is handled separately by UserDetailsServiceImpl
+ * to avoid circular dependency with SecurityConfig.
+ */
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService, UserDetailsService {
+public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -52,7 +51,10 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     @Override
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
 
         User user = userRepository.findByEmail(request.getEmail())
@@ -60,18 +62,6 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
         String token = jwtUtil.generateToken(user);
         return buildAuthResponse(token, user);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-        );
     }
 
     private AuthResponse buildAuthResponse(String token, User user) {
@@ -85,3 +75,6 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
                 .build();
     }
 }
+
+
+
