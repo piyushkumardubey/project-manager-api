@@ -1,3 +1,5 @@
+package project_manager_api.security;
+
 import java.io.IOException;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
