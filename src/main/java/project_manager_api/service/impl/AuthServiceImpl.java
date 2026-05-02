@@ -15,11 +15,6 @@ import project_manager_api.repository.UserRepository;
 import project_manager_api.security.JwtUtil;
 import project_manager_api.service.AuthService;
 
-/**
- * AuthServiceImpl handles only signup and login.
- * UserDetailsService is handled separately by UserDetailsServiceImpl
- * to avoid circular dependency with SecurityConfig.
- */
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -44,7 +39,6 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
         String token = jwtUtil.generateToken(user);
-
         return buildAuthResponse(token, user);
     }
 
@@ -52,9 +46,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
+                        request.getEmail(), request.getPassword())
         );
 
         User user = userRepository.findByEmail(request.getEmail())
@@ -75,6 +67,3 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 }
-
-
-
