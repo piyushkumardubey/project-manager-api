@@ -138,6 +138,4 @@
     </build>
 
 </project>
-pom.xml fixed with Lombok annotationProcessorPaths
 
-Fix .gitignore to exclude Eclipse bin/ fold
