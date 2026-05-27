@@ -39,8 +39,13 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/error").permitAll()
+                .requestMatchers(
+    "/",
+    "/api/auth/**",
+    "/error",
+    "/swagger-ui/**",
+    "/v3/api-docs/**"
+).permitAll()
                 .anyRequest().authenticated()
             )
             // FIX 2: proper JSON error responses instead of Spring's Whitelabel HTML page
