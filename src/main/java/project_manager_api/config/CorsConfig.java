@@ -23,7 +23,7 @@ public class CorsConfig {
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
                 "http://localhost:3000",
-                "https://frontend-5ch1.onrender.com"
+                "https://6a1774c95bf12798a505bb1a--gleeful-blancmange-e4c80d.netlify.app/"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
